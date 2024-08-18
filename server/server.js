@@ -22,8 +22,8 @@ const { v4: uuid } = require("uuid");
 const https = require("https");
 const { Server } = require("socket.io");
 
-const fs = require("fs");
-const path = require("path");
+// const fs = require("fs");
+// const path = require("path");
 // const { ExpressPeerServer } = require("peer")
 
 const express = require("express");
@@ -34,17 +34,17 @@ app.use(express.json());
 app.use(cors());
 
 // this is the path where the key and cert located in client folder
-const keyPath = path.join(__dirname, "../client/certs/cert.key");
-const certPath = path.join(__dirname, "../client/certs/cert.crt");
+// const keyPath = path.join(__dirname, "../client/certs/cert.key");
+// const certPath = path.join(__dirname, "../client/certs/cert.crt");
 
-const server = https.createServer(
-  {
-    //we use this key and cert to allow https in our localhost when we use the video call in othe device.
-    key: fs.readFileSync(keyPath),
-    cert: fs.readFileSync(certPath),
-  },
-  app
-);
+// const server = https.createServer(
+//   {
+//     //we use this key and cert to allow https in our localhost when we use the video call in othe device.
+//     key: fs.readFileSync(keyPath),
+//     cert: fs.readFileSync(certPath),
+//   },
+//   app
+// );
 
 const io = new Server(server, {
   cors: {
