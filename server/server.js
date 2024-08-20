@@ -48,7 +48,7 @@ app.use(cors());
 
 const io = new Server(server, {
   cors: {
-    origin: "*", //https://chatapp-4e8dd.web.app
+    origin: "*", //https://you_app.web.app, this url given by your hosting service firebase
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
