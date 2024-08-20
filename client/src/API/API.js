@@ -9,7 +9,7 @@ const isMobile = () => {
 const baseURL = isMobile() ? "https://192.168.100.22:3001/" : "https://localhost:3001/";
 
 //use this baseURL depends on what services you upload you serve api
-// const baseURL = 'https://chat-application-x8vw.onrender.com'
+// const baseURL = 'https://your_app.onrender.com'
 
 export default axios.create({
   baseURL: baseURL
