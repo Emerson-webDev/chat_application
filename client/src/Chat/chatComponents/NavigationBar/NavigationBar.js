@@ -25,6 +25,7 @@ import {
   ListitemButton,
   LogoutButton,
   NavBox,
+  NotificationBadge,
 } from "./Theme/Theme";
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import {
@@ -35,7 +36,6 @@ import {
 } from "../../../firebase_config/firebase_config";
 
 import chatlogo from "../../../Assets/logo.webp";
-import { NotificationBadge } from "../ChatContainer/Theme/Theme";
 import { baseURL } from "../../../API/API";
 import { io } from "socket.io-client";
 import { ModeContext } from "../../../useContext/ModeContext";
@@ -43,8 +43,8 @@ import { ActiveComponentContext } from "../../../useContext/ActiveComponentConte
 
 export default function NavigationBar({ iconClickedHandler, activeComponent }) {
   const { signOut, currentUser } = useContext(AuthContext);
-  const { mode, dispatchMode } = useContext(ModeContext)
-  const { dispatchActiveComponent } = useContext(ActiveComponentContext)
+  const { mode, dispatchMode } = useContext(ModeContext);
+  const { dispatchActiveComponent } = useContext(ActiveComponentContext);
   const { dispatch } = useContext(ChatUserContext);
 
   const [currentPhoto, setCurrentPhoto] = useState(currentUser.photoURL);
@@ -57,7 +57,10 @@ export default function NavigationBar({ iconClickedHandler, activeComponent }) {
 
   const handleIconClick = (activeIconId) => {
     // iconClickedHandler(activeIconId);
-    dispatchActiveComponent({type : "ACTIVE_COMPONENT", payload : activeIconId})
+    dispatchActiveComponent({
+      type: "ACTIVE_COMPONENT",
+      payload: activeIconId,
+    });
   };
 
   // userChatCollectionRef
@@ -158,7 +161,7 @@ export default function NavigationBar({ iconClickedHandler, activeComponent }) {
       return () => unsubscribe();
     };
     profilePhoto();
-     // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // console.log(me);
@@ -295,7 +298,7 @@ export default function NavigationBar({ iconClickedHandler, activeComponent }) {
             >
               <IconButton onClick={modeHandler}>
                 {mode === "light" ? (
-                  <LightModeOutlinedIcon sx={{color : "default.blur"}}/>
+                  <LightModeOutlinedIcon sx={{ color: "default.blur" }} />
                 ) : (
                   <NightlightIcon />
                 )}
