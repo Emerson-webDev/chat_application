@@ -815,12 +815,6 @@ export const FriendRequestBadge = styled(MuiBadge)(({ theme }) => ({
   },
 }));
 
-export const NotificationBadge = styled(MuiBadge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    backgroundColor: theme.palette.icon.danger,
-  },
-}));
-
 export const CustomWidthTooltip = styled(({ className, ...props }) => (
   <Tooltip {...props} classes={{ popper: className }} arrow />
 ))(({ theme }) => ({
