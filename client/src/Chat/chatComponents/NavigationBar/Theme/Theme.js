@@ -4,6 +4,7 @@ import Tooltip from "@mui/material/Tooltip";
 import MuiDrawer from "@mui/material/Drawer";
 import MuiPaper from "@mui/material/Paper";
 import MuiBottomNavigation from "@mui/material/BottomNavigation";
+import MuiBadge from "@mui/material/Badge";
 
 const drawerWidth = 94;
 
@@ -114,4 +115,18 @@ export const BottomNavigation = styled(MuiBottomNavigation)(({ theme }) => ({
       padding: 0,
     },
   },
+}));
+
+
+export const NotificationBadge = styled(MuiBadge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: theme.palette.icon.danger,
+  },
+  [theme.breakpoints.down("sm")] : {
+    "& .MuiBadge-badge.MuiBadge-standard": {
+      minWidth: 12,
+      height: 14,
+      fontSize: 7
+    },
+  }
 }));
