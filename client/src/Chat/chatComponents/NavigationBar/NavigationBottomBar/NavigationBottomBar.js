@@ -100,6 +100,26 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const readNotification = () => {
+    if (notificationData !== null) {
+      Object.keys(notificationData).forEach(async (key) => {
+        if (!notificationData[key].is_Read) {
+          await updateDoc(
+            doc(userNotificationsCollectionRef, currentUser.uid),
+            {
+              [key]: {
+                ...notificationData[key],
+                is_Read: true,
+              },
+            }
+          );
+        }
+      });
+    }
+
+    return;
+  };
+
   //count notification in list that not already open
   useEffect(() => {
     const countNotification = () => {
@@ -220,6 +240,7 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
             }
             onClick={() => {
               handleIconClick("Notification");
+              readNotification()
             }}
             selected={activeComponent === "Notification"}
           />
