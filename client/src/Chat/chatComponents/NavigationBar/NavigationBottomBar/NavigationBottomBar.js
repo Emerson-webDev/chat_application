@@ -9,7 +9,7 @@ import GroupsIcon from "@mui/icons-material/Groups";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import NightlightIcon from "@mui/icons-material/Nightlight";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
-import { BottomNavigation, Paper } from "../Theme/Theme";
+import { BottomNavigation, NotificationBadge, Paper } from "../Theme/Theme";
 import {
   Divider,
   ListItemIcon,
@@ -25,6 +25,13 @@ import { baseURL } from "../../../../API/API";
 import { io } from "socket.io-client";
 import { ActiveComponentContext } from "../../../../useContext/ActiveComponentContext";
 import { ModeContext } from "../../../../useContext/ModeContext";
+import { doc, onSnapshot } from "firebase/firestore";
+
+import {
+  friendRequestCollectionRef,
+  userChatCollectionRef,
+  userNotificationsCollectionRef,
+} from "../../../../firebase_config/firebase_config";
 
 export default function NavigationBottomBar({ iconClickedHandler }) {
   const { signOut, currentUser } = useContext(AuthContext);
@@ -32,6 +39,13 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
   const { activeComponent, dispatchActiveComponent } = useContext(
     ActiveComponentContext
   );
+
+  const [newMessageCount, setNewMessageCount] = useState(0);
+  const [newRequestCount, setNewRequestCount] = useState(0);
+  const [newNotifCount, setNewNotifCount] = useState(0);
+
+  const [notificationData, setNotificationData] = useState(null);
+
   const { dispatch } = useContext(ChatUserContext);
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -57,19 +71,101 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
     dispatchActiveComponent({ type: "ACTIVE_COMPONENT", payload: activeIcon });
   };
 
+  // count new message that not already open
+  useEffect(() => {
+    const countUnreadMessage = () => {
+      const unsubscribe = onSnapshot(
+        doc(userChatCollectionRef, currentUser.uid),
+        (docSnap) => {
+          try {
+            if (docSnap.exists()) {
+              const fetchData = docSnap.data();
+              const messages = Object.values(fetchData) || [];
+
+              // Count unread messages
+              const unreadMessageCount = messages.filter(
+                (message) => !message.is_Read
+              ).length;
+              setNewMessageCount(unreadMessageCount);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      );
+      return () => unsubscribe();
+    };
+    countUnreadMessage();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //count notification in list that not already open
+  useEffect(() => {
+    const countNotification = () => {
+      const unsubscribe = onSnapshot(
+        doc(userNotificationsCollectionRef, currentUser.uid),
+        (docSnap) => {
+          try {
+            if (docSnap.exists()) {
+              const fetchData = docSnap.data();
+              const newNotif = Object.values(fetchData).filter(
+                (notif) => !notif.is_Read
+              ).length;
+              setNewNotifCount(newNotif);
+              setNotificationData(fetchData);
+            }
+          } catch (error) {}
+        }
+      );
+      return () => unsubscribe();
+    };
+    countNotification();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  //friendRequestCollectionRef
+  useEffect(() => {
+    const fetchFriendRequest = () => {
+      const unsubscribe = onSnapshot(
+        doc(friendRequestCollectionRef, currentUser.uid),
+        (docSnap) => {
+          try {
+            if (docSnap.exists()) {
+              const requestCount = Object.values(docSnap.data())?.filter(
+                (request) =>
+                  request.request_state === "pending" &&
+                  request.requestUID_by !== currentUser.uid
+              ).length;
+              setNewRequestCount(requestCount);
+            }
+          } catch (error) {
+            console.log(error);
+          }
+        }
+      );
+
+      return () => unsubscribe();
+    };
+    fetchFriendRequest();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     if (isMediumUp) {
       handleClose();
     }
   }, [isMediumUp]);
 
- // Map active component to BottomNavigation index
- const componentIndex = {
-  Chat: 0,
-  Friend: 1,
-  Notification: 3,
-  Profile: 4,
-};
+  // Map active component to BottomNavigation index
+  const componentIndex = {
+    Chat: 0,
+    Friend: 1,
+    Notification: 3,
+    Profile: 4,
+  };
 
   return (
     <Paper elevation={3}>
@@ -80,14 +176,32 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
         >
           <BottomNavigationAction
             label="Chat"
-            icon={<ChatBubbleIcon />}
-            onClick={() => {handleIconClick("Chat")}}
+            icon={
+              <NotificationBadge
+                color="secondary"
+                badgeContent={newMessageCount}
+              >
+                <ChatBubbleIcon />
+              </NotificationBadge>
+            }
+            onClick={() => {
+              handleIconClick("Chat");
+            }}
             selected={activeComponent === "Chat"}
           />
           <BottomNavigationAction
             label="Friends"
-            icon={<GroupsIcon />}
-            onClick={() => {handleIconClick("Friend")}}
+            icon={
+              <NotificationBadge
+                color="secondary"
+                badgeContent={newRequestCount}
+              >
+                <GroupsIcon />
+              </NotificationBadge>
+            }
+            onClick={() => {
+              handleIconClick("Friend");
+            }}
             selected={activeComponent === "Friend"}
           />
           <BottomNavigationAction
@@ -99,8 +213,14 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
           />
           <BottomNavigationAction
             label="Notifications"
-            icon={<NotificationsIcon />}
-            onClick={() => {handleIconClick("Notification")}}
+            icon={
+              <NotificationBadge color="secondary" badgeContent={newNotifCount}>
+                <NotificationsIcon />
+              </NotificationBadge>
+            }
+            onClick={() => {
+              handleIconClick("Notification");
+            }}
             selected={activeComponent === "Notification"}
           />
           <BottomNavigationAction
