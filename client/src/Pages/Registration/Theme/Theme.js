@@ -152,10 +152,10 @@ export const GoogleButton = styled(Button)(({theme}) => ({
   justifyContent: "none",
 }));
 
-export const FacebookButton = styled(Button)(({theme}) => ({
+export const GitHubButton = styled(Button)(({theme}) => ({
   color: theme.palette.maincolor.mainwhite,
   backgroundImage:
-    "linear-gradient(305deg,hsl(217deg 89% 61%) 8%,hsl(222deg 89% 70%) 83%,hsl(225deg 89% 77%) 95%,hsl(228deg 90% 84%) 99%,hsl(229deg 91% 89%) 101%,hsl(231deg 92% 95%) 101%,hsl(0deg 0% 100%) 100%)",
+    "linear-gradient(322deg, rgba(24,24,24,1) 69%, rgba(91,91,91,1) 90%, rgba(129,129,129,1) 96%, rgba(135,135,135,1) 100%)",
 }));
 
 export const InputTextField = styled(TextField)(({ theme }) => ({
