@@ -75,7 +75,7 @@ export default function PersonalInfo() {
   // check for google sign in. if user use google sign in we need to disable our update for profile
   const isPasswordSignIn =
     currentUser.providerData[0].providerId === "google.com" ||
-    currentUser.providerData[0].providerId === "facebook.com"
+    currentUser.providerData[0].providerId === "github.com"
       ? "disable"
       : "";
 
@@ -180,7 +180,7 @@ export default function PersonalInfo() {
                   notification_id: uuid(),
                   date: Timestamp.now(),
                   uid: currentUser.uid,
-                  notification_content: `${currentUser.displayName} update profile picture`,
+                  notification_content: `${currentUser.displayName || currentUser.reloadUserInfo.screenName} update profile picture`,
                 }),
               });
             }
@@ -244,7 +244,7 @@ export default function PersonalInfo() {
             >
               <ProfileAvatar
                 src={currentUser.photoURL}
-                alt={currentUser.displayName}
+                alt={currentUser.displayName || currentUser.reloadUserInfo.screenName}
               />
             </Badge>
             <Typography variant="h5">{currentUserData.displayName}</Typography>
