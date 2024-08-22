@@ -50,7 +50,7 @@ const server = https.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: "*", //https://you_app.web.app, this url given by your hosting service firebase
+    origin: "https://chatapp-4e8dd.web.app", //https://you_app.web.app, this url given by your hosting service firebase
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
