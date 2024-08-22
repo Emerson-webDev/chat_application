@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
   socket.on("connecting", (userPeerID, currentId) => {
     !Object.keys(users).includes(currentId)
       ? ((users[currentId] = userPeerID),
-        socket.emit("currentPeerID", userPeerID),)
+        socket.emit("currentPeerID", userPeerID))
       : (users[currentId] = userPeerID),
       socket.emit("currentPeerID", userPeerID),
       // console.log(users);
