@@ -69,26 +69,11 @@ export default function FriendRequestList() {
 
   console.log()
 
-  // const isMobileDevice = () => {
-  //   return /Mobi|Android|iPhone|iPad|iPod|Windows Phone|KFAPWI/i.test(
-  //     navigator.userAgent
-  //   );
-  // };
-
-  // const getRejectRequestURL = (currentId) => {
-  //   if (isMobileDevice()) {
-  //     // Replace 'your_laptop_ip' with the actual IP address of your laptop running the server
-  //     return `http://192.168.1.13:3001/reject_request/${currentId}`;
-  //   } else {
-  //     return `http://localhost:3001/reject_request/${currentId}`;
-  //   }
-  // };
-
   const acceptRequestHandler = async (currentId, requested_by, key) => {
     try {
       // const deleteRequestUrl = getRejectRequestURL(key)
       await API.post(`accept_request/${currentId}`, {
-        ids: [requested_by, key, currentUser.displayName],
+        ids: [requested_by, key, currentUser.displayName || currentUser.reloadUserInfo.screenName],
       });
       // });
     } catch (error) {
