@@ -46,6 +46,8 @@ app.use(cors());
 //   app
 // );
 
+const server = https.createServer(app)
+
 const io = new Server(server, {
   cors: {
     origin: "*", //https://you_app.web.app, this url given by your hosting service firebase
