@@ -22,7 +22,7 @@ import {
 } from "../../firebase_config/firebase_config";
 import {
   signInWithEmailAndPassword,
-  FacebookAuthProvider,
+  GithubAuthProvider,
 } from "firebase/auth";
 import { ref, uploadBytesResumable } from "firebase/storage";
 import { AuthContext } from "../../useContext/AuthContext";
@@ -43,14 +43,14 @@ import {
   Typography,
 } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
+import GitHubIcon from '@mui/icons-material/GitHub';
 
 import {
   AppLogo,
   CustomForgotBox,
   CustomTypographyH5,
   CustomTypographySubtitle1,
-  FacebookButton,
+  GitHubButton,
   GoogleButton,
   InputTextField,
   LogInButton,
@@ -60,8 +60,9 @@ import {
 } from "./Theme/Theme";
 
 import chatlogo from "../../Assets/logo.webp";
-import { FaceBookSignIn } from "../FaceBookSignIn/FaceBookSignIn";
+
 import { GoogleSignIn } from "../GoogleSignIn/GoogleSignIn";
+import { GithubSignIn } from "../GithubSignIn/GithubSignIn";
 
 export default function InputForm() {
   const [state, dispatch] = useReducer(logInReducer, INITIAL_STATE);
@@ -196,16 +197,18 @@ export default function InputForm() {
     }
   };
 
-  //using facebook for logging in
-  const faceBookSignIn = async (e) => {
+  //using github for logging in
+  const gitHubSignIn = async (e) => {
     e.preventDefault();
 
     try {
-      const result = await FaceBookSignIn();
+      const result = await GithubSignIn();
       const user = result.user;
 
       if (user) {
         navigate("/");
+
+        const displayName = user.displayName || user.reloadUserInfo.screenName
         const storageRef = ref(
           storage,
           `ProfilePhoto/${user.uid}/${user.photoURL}`
@@ -243,7 +246,7 @@ export default function InputForm() {
                   {
                     uid: user.uid,
                     photoURL: user.photoURL,
-                    displayName: user.displayName,
+                    displayName: displayName,
                     email: user.providerData[0].email,
                     status: {
                       state: "offline",
@@ -293,18 +296,20 @@ export default function InputForm() {
         );
       }
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
+    //    // Handle Errors here.
+    // const errorCode = error.code;
+    // const errorMessage = error.message;
+    // // The email of the user's account used.
+    // const email = error.customData.email;
+    // // The AuthCredential type that was used.
+    // const credential = GithubAuthProvider.credentialFromError(error);
+    // // ...
 
-      console.log(errorCode);
-      console.log(errorMessage);
-      console.log(email);
-      console.log(credential);
-      console.log(error);
+    //   console.log(errorCode);
+    //   console.log(errorMessage);
+    //   console.log(email);
+    //   console.log(credential);
+      // console.log(error.message);
     }
   };
 
@@ -463,13 +468,13 @@ export default function InputForm() {
               Sign with google
             </GoogleButton>
 
-            <FacebookButton
+            <GitHubButton
               variant="contained"
-              startIcon={<FacebookIcon />}
-              onClick={faceBookSignIn}
+              startIcon={<GitHubIcon />}
+              onClick={gitHubSignIn}
             >
-              Sign with facebook
-            </FacebookButton>
+              Sign with Github
+            </GitHubButton>
           </Stack>
         </>
       </Stack>
