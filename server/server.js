@@ -19,7 +19,7 @@ const {
 
 const { v4: uuid } = require("uuid");
 
-const https = require("https");
+const http = require("http");
 const { Server } = require("socket.io");
 
 // const fs = require("fs");
@@ -46,7 +46,7 @@ app.use(cors());
 //   app
 // );
 
-const server = https.createServer(app)
+const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
