@@ -61,8 +61,8 @@ export default function PersonalInfo() {
   const signInMethod =
     currentUser.providerData[0].providerId === "google.com"
       ? "google sign in"
-      : currentUser.providerData[0].providerId === "facebook.com"
-      ? "facebook sign in"
+      : currentUser.providerData[0].providerId === "github.com"
+      ? "github sign in"
       : "Email and password";
 
   // console.log(currentUser)
@@ -192,7 +192,7 @@ export default function PersonalInfo() {
   };
 
   //check for sign in method
-  const userEmail = currentUser.providerData[0].providerId === "facebook.com" && currentUser.providerData[0].email
+  const userEmail = currentUser.providerData[0].providerId === "github.com" && currentUser.providerData[0].email
   ? currentUser.providerData[0].email
   : currentUser.providerData[0].providerId === "google.com" && currentUser.providerData[0].email
   ? currentUser.providerData[0].email
