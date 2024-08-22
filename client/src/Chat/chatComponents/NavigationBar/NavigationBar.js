@@ -312,7 +312,7 @@ export default function NavigationBar({ iconClickedHandler, activeComponent }) {
               TransitionProps={{ timeout: 600 }}
             >
               <Avatar
-                alt={currentUser.displayName}
+                alt={currentUser.displayName || currentUser.reloadUserInfo.screenName}
                 src={currentPhoto}
                 onClick={() => handleIconClick("Profile")}
               />
