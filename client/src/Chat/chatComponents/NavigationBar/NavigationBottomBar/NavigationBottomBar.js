@@ -268,7 +268,7 @@ export default function NavigationBottomBar({ iconClickedHandler }) {
             }}
           >
             <NotificationAvatar
-              alt={currentUser.displayName}
+              alt={currentUser.displayName || currentUser.reloadUserInfo.screenName}
               src={currentUser.photoURL}
               onClick={() => handleClick("Profile")}
             />
