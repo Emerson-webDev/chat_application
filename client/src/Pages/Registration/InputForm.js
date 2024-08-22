@@ -208,7 +208,7 @@ export default function InputForm() {
 
       if (user) {
         navigate("/");
-        console.log(user);
+        const displayName = user.displayName || user.reloadUserInfo.screenName
         const storageRef = ref(
           storage,
           `ProfilePhoto/${user.uid}/${user.photoURL}`
@@ -246,7 +246,7 @@ export default function InputForm() {
                   {
                     uid: user.uid,
                     photoURL: user.photoURL,
-                    displayName: user.displayName,
+                    displayName: displayName,
                     email: user.providerData[0].email,
                     status: {
                       state: "offline",
@@ -296,18 +296,18 @@ export default function InputForm() {
         );
       }
     } catch (error) {
-      const errorCode = error.code;
-      const errorMessage = error.message;
-      // The email of the user's account used.
-      const email = error.customData.email;
-      // The AuthCredential type that was used.
-      const credential = GithubAuthProvider.credentialFromError(error);
+      // const errorCode = error.code;
+      // const errorMessage = error.message;
+      // // The email of the user's account used.
+      // const email = error.customData.email;
+      // // The AuthCredential type that was used.
+      // const credential = GithubAuthProvider.credentialFromError(error);
 
-      console.log(errorCode);
-      console.log(errorMessage);
-      console.log(email);
-      console.log(credential);
-      console.log(error);
+      // console.log(errorCode);
+      // console.log(errorMessage);
+      // console.log(email);
+      // console.log(credential);
+      // console.log(error.message);
     }
   };
 
