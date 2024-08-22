@@ -95,7 +95,7 @@ app.get("/search_user", async (req, res) => {
       .filter((user) => user.displayName.toLowerCase().includes(searchTerm));
 
     res.send(results);
-    // console.log(results);
+    console.log(results);
   } catch (error) {
     console.error("Error searching for users:", error);
     res.status(500).json({ error: "Internal Server Error" });
