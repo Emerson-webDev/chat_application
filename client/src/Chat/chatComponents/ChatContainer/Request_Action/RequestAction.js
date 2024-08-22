@@ -50,7 +50,7 @@ export default function RequestAction({
     try {
       option === "Confirm"
         ? await API.post(`/accept_request/${currentUser.uid}`, {
-                ids: [data.user.uid, data.chatId, currentUser.displayName,currentUser.photoURL],
+                ids: [data.user.uid, data.chatId, currentUser.displayName || currentUser.reloadUserInfo.screenName,currentUser.photoURL],
               })
         : await API.delete(
             `/reject_request/${currentUser.uid}`,{
