@@ -143,7 +143,7 @@ export default function ChatContainer({ onCancel, allPeerData, createCall }) {
           doc(friendRequestCollectionRef, data.user.uid),
           {
             [data.chatId]: {
-              displayName: currentUser.displayName,
+              displayName: currentUser.displayName || currentUser.reloadUserInfo.screenName,
               photoURL: currentUser.photoURL,
               requestUID_to: data.user.uid,
               requestUID_by: currentUser.uid,
@@ -158,7 +158,7 @@ export default function ChatContainer({ onCancel, allPeerData, createCall }) {
           doc(friendRequestCollectionRef, currentUser.uid),
           {
             [data.chatId]: {
-              displayName: currentUser.displayName,
+              displayName: currentUser.displayName || currentUser.reloadUserInfo.screenName,
               photoURL: currentUser.photoURL,
               requestUID_to: data.user.uid,
               requestUID_by: currentUser.uid,
@@ -196,7 +196,7 @@ export default function ChatContainer({ onCancel, allPeerData, createCall }) {
               date: Timestamp.now(),
               uid: currentUser.uid,
               photoURL: currentUser.photoURL,
-              notification_content: `${currentUser.displayName} sent you a friend request.`,
+              notification_content: `${currentUser.displayName || currentUser.reloadUserInfo.screenName} sent you a friend request.`,
               is_Read: false,
             },
           },
