@@ -17,7 +17,7 @@ export default function EmptyChatContainer() {
       >
         <Avatar
           src={currentUser.photoURL}
-          alt={currentUser.displayName}
+          alt={currentUser.displayName || currentUser.reloadUserInfo.screenName}
           sx={{width:100, height: 100, fontSize: 40}}
         />
         <Typography fontWeight={700} sx={ (theme) => ({ marginTop: 4, marginBottom: 0, fontSize: "1.25rem", color: theme.palette.text.current}) }>
