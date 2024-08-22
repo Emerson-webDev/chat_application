@@ -226,7 +226,7 @@ export default function FetchChatMessage({
                   await updateDoc(doc(userChatCollectionRef, data.user.uid), {
                     [data.chatId + ".user_info"]: {
                       uid: currentUser.uid,
-                      displayName: currentUser.displayName,
+                      displayName: currentUser.displayName || currentUser.reloadUserInfo.screenName,
                       photoURL: currentUser.photoURL,
                     },
                     [data.chatId + ".last_message"]: value.message,
@@ -421,7 +421,7 @@ export default function FetchChatMessage({
 
             <Box>
               <Avatar
-                alt={currentUser.displayName}
+                alt={currentUser.displayName || currentUser.reloadUserInfo.screenName}
                 src={currentUser.photoURL}
                 sx={{
                   width: 35,
