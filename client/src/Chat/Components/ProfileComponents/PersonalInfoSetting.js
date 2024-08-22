@@ -226,7 +226,7 @@ export default function PersonalInfoSetting() {
   };
 
   //check for sign in method
-  const userEmail = currentUser.providerData[0].providerId === "facebook.com" && currentUser.providerData[0].email
+  const userEmail = currentUser.providerData[0].providerId === "github.com" && currentUser.providerData[0].email
   ? currentUser.providerData[0].email
   : currentUser.providerData[0].providerId === "google.com" && currentUser.providerData[0].email
   ? currentUser.providerData[0].email
@@ -273,12 +273,11 @@ export default function PersonalInfoSetting() {
                 <TextField
                   size="small"
                   name="displayName"
-                  value={state.displayName}
+                  value={state.displayName || currentUser.reloadUserInfo.screenName}
                   disabled={signInMethod}
                   onChange={onChangeProfile}
                 />
               </FormControl>
-              {/* <Box></Box> */}
               <UpdateButton type="submit" disabled={signInMethod}>
                 Save Changes
               </UpdateButton>
