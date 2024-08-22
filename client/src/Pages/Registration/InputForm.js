@@ -16,7 +16,7 @@ import {
   videoCallCollectionRef,
 } from "../../firebase_config/firebase_config";
 import {
-  FacebookAuthProvider,
+  GithubAuthProvider,
   createUserWithEmailAndPassword,
   fetchSignInMethodsForEmail,
   updateProfile,
@@ -42,12 +42,12 @@ import {
 } from "@mui/material";
 import { inputs } from "./Input";
 import GoogleIcon from "@mui/icons-material/Google";
-import FacebookIcon from "@mui/icons-material/Facebook";
+import GitHubIcon from "@mui/icons-material/GitHub";
 import {
   AppLogo,
   CustomTypographyH5,
   CustomTypographySubtitle1,
-  FacebookButton,
+  GitHubButton,
   GoogleButton,
   InputTextField,
   LogInLink,
@@ -58,8 +58,8 @@ import {
 import chatlogo from "../../Assets/logo.webp";
 
 import { AuthContext } from "../../useContext/AuthContext";
-import { FaceBookSignIn } from "../FaceBookSignIn/FaceBookSignIn";
 import { GoogleSignIn } from "../GoogleSignIn/GoogleSignIn";
+import { GithubSignIn } from "../GithubSignIn/GithubSignIn";
 
 export default function InputForm() {
   const [state, dispatch] = useReducer(registrationReducer, INITIAL_STATE);
@@ -102,7 +102,7 @@ export default function InputForm() {
       const result = await GoogleSignIn();
       const user = result.user;
 
-      console.log(user)
+      console.log(user);
 
       if (user) {
         navigate("/");
@@ -198,12 +198,12 @@ export default function InputForm() {
     }
   };
 
-  //using facebook for logging in
-  const faceBookSignIn = async (e) => {
+  //using github for logging in
+  const gitHubSignIn = async (e) => {
     e.preventDefault();
 
     try {
-      const result = await FaceBookSignIn();
+      const result = await GithubSignIn();
       const user = result.user;
 
       if (user) {
@@ -301,7 +301,7 @@ export default function InputForm() {
       // The email of the user's account used.
       const email = error.customData.email;
       // The AuthCredential type that was used.
-      const credential = FacebookAuthProvider.credentialFromError(error);
+      const credential = GithubAuthProvider.credentialFromError(error);
 
       console.log(errorCode);
       console.log(errorMessage);
@@ -598,9 +598,9 @@ export default function InputForm() {
             </LogInLink>
           </Typography>
 
-          <Typography  mb={2} mt={1} textAlign="center">
-          <span style={{ fontWeight: "bold" }}>or</span>{" "}
-          </Typography> 
+          <Typography mb={2} mt={1} textAlign="center">
+            <span style={{ fontWeight: "bold" }}>or</span>{" "}
+          </Typography>
 
           <Stack spacing={2}>
             <GoogleButton
@@ -611,13 +611,13 @@ export default function InputForm() {
               Sign up with google
             </GoogleButton>
 
-            <FacebookButton
+            <GitHubButton
               variant="contained"
-              startIcon={<FacebookIcon />}
-              onClick={faceBookSignIn}
+              startIcon={<GitHubIcon />}
+              onClick={gitHubSignIn}
             >
-              Sign up with facebook
-            </FacebookButton>
+              Sign up with Github
+            </GitHubButton>
           </Stack>
         </>
       </Stack>
