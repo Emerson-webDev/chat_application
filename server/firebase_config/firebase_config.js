@@ -7,12 +7,12 @@ const { collection, getFirestore } = require("@firebase/firestore");
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "",
-  authDomain: "",
-  projectId: "",
-  storageBucket: "",
-  messagingSenderId: "",
-  appId: "",
+  apiKey: "AIzaSyDJcMFPWaCcG4EpNLovj2bdMoqE6t5QKVU",
+  authDomain: "chatapp-4e8dd.firebaseapp.com",
+  projectId: "chatapp-4e8dd",
+  storageBucket: "chatapp-4e8dd.appspot.com",
+  messagingSenderId: "675892992691",
+  appId: "1:675892992691:web:0c655eec1c43c6a6a66ec6",
 };
 
 // Initialize Firebase
