@@ -220,7 +220,7 @@ export default function Chatcomposer() {
             updateDoc(doc(userChatCollectionRef, data.user.uid), {
               [data.chatId + ".user_info"]: {
                 uid: currentUser.uid,
-                displayName: currentUser.displayName,
+                displayName: currentUser.displayName || currentUser.reloadUserInfo.screenName,
                 photoURL: currentUser.photoURL,
               },
               [data.chatId + ".last_message"]: message,
