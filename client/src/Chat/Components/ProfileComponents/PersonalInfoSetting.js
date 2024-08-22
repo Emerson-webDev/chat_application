@@ -92,7 +92,7 @@ export default function PersonalInfoSetting() {
   useEffect(() => {
     dispatch({
       type: "UPDATE_ACCOUNT",
-      payload: { displayName: currentUser.displayName },
+      payload: { displayName: currentUser.displayName || currentUser.reloadUserInfo.screenName},
     });
 
     const getChat = async () => {
