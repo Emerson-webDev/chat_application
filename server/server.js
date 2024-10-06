@@ -50,7 +50,7 @@ const server = http.createServer(app)
 
 const io = new Server(server, {
   cors: {
-    origin: "https://chatapp-4e8dd.web.app", //https://you_app.web.app or ["https://your_app.firebaseapp.com", "https://your_app.web.app"], this url given by your hosting service firebase
+    origin: "*", //https://you_app.web.app or ["https://your_app.firebaseapp.com", "https://your_app.web.app"], this url given by your hosting service firebase
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
@@ -64,7 +64,7 @@ io.on("connection", (socket) => {
         socket.emit("currentPeerID", userPeerID))
       : (users[currentId] = userPeerID),
       socket.emit("currentPeerID", userPeerID),
-      console.log(users);
+      // console.log(users);
 
     io.sockets.emit("allPeerData", users);
   });
@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
       // delete users[remoteUserPeerId]
       io.sockets.emit("allPeerData", users); // Emitting updated users to all clients
       // console.log(`User ${currentId} disconnected`);
-      console.log(users);
+      // console.log(users);
     }
   });
 });
@@ -93,7 +93,7 @@ app.get("/search_user", async (req, res) => {
       .filter((user) => user.displayName.toLowerCase().includes(searchTerm));
 
     res.send(results);
-    console.log(results);
+    // console.log(results);
   } catch (error) {
     console.error("Error searching for users:", error);
     res.status(500).json({ error: "Internal Server Error" });
