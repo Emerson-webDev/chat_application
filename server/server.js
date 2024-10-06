@@ -93,7 +93,7 @@ app.get("/search_user", async (req, res) => {
       .filter((user) => user.displayName.toLowerCase().includes(searchTerm));
 
     res.send(results);
-    // console.log(results);
+    console.log(results);
   } catch (error) {
     console.error("Error searching for users:", error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -105,7 +105,7 @@ app.put("/update_account/:id", async (req, res) => {
   try {
     const data = req.body;
     const id = req.params.id;
-console.log(data)
+
     await updateDoc(doc(userCollectionRef, id), {
       displayName: data.displayName,
     });
