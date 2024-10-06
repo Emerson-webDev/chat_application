@@ -105,7 +105,7 @@ app.put("/update_account/:id", async (req, res) => {
   try {
     const data = req.body;
     const id = req.params.id;
-
+console.log(data)
     await updateDoc(doc(userCollectionRef, id), {
       displayName: data.displayName,
     });
