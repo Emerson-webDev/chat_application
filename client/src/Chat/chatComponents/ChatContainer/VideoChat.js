@@ -6,6 +6,8 @@ export default function VideoChat({
   open,
   onCancel,
   cancelCall,
+  front,
+  switchCamera,
   isMicOn,
   setIsMicOn,
   videoCamActive,
@@ -24,6 +26,8 @@ export default function VideoChat({
   return (
     <Box>
       {localVideoRef && <ActiveCall
+        front={front}
+        switchCamera={switchCamera}
         isMicOn={isMicOn}
         setIsMicOn={setIsMicOn}
         videoCamActive={videoCamActive}
