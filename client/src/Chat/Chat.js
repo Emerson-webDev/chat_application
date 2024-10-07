@@ -43,6 +43,9 @@ export default function Chat() {
   const [remoteStream, setRemoteStream] = useState(null);
   const [allPeerData, setAllPeerData] = useState({});
 
+  //set camera facing. switch front or back camera
+  const [front, setFront] = useState(true);
+
   // this for muting the audio or unmuting
   const [isMicOn, setIsMicOn] = useState(true);
   // this for open or close camera
@@ -411,6 +414,45 @@ export default function Chat() {
     }, 1000);
   };
 
+  // switch facemode
+  const switchCamera = async () => {
+    try {
+      // Stop the current video tracks to free up resources
+      const stream = localVideoRef.current.srcObject;
+      const audioTrack = stream.getAudioTracks()[0];
+
+      stream.getVideoTracks().forEach((track) => track.stop());
+
+      // Toggle the facing mode
+      const newFacingMode = front ? "environment" : "user";
+      setFront((prev) => !prev);
+
+      // Request a new stream with the updated facingMode
+      const newStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: newFacingMode },
+      });
+
+      newStream.addTrack(audioTrack)
+
+      setRemoteStream(newStream)
+
+      // Apply the new stream to localVideoRef
+      localVideoRef.current.srcObject = newStream;
+
+      // Replace tracks on the existing PeerJS call with new stream tracks
+      const remoteUser = peerRef.current?.connections[
+        allPeerData[data.user.uid]
+      ][0].peerConnection
+        .getSenders()
+        .find((remoteUser) => remoteUser.track.kind === "video");
+      if (remoteUser) {
+        remoteUser.replaceTrack(newStream.getVideoTracks()[0]);
+      }
+    } catch (error) {
+      console.error("Error toggling camera facing mode:", error);
+    }
+  };
+
   //icon will be active once it clicked
   const iconClickedHandler = (iconclicked) => {
     // setActiveComponent(iconclicked);
@@ -461,6 +503,8 @@ export default function Chat() {
         <VideoChat
           open={open}
           cancelCall={cancelCall}
+          front={front}
+          switchCamera={switchCamera}
           isMicOn={isMicOn}
           setIsMicOn={setIsMicOn}
           videoCamActive={videoCamActive}
