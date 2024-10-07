@@ -10,6 +10,8 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
+import FlipCameraAndroidOutlinedIcon from '@mui/icons-material/FlipCameraAndroidOutlined';
+import CameraFrontOutlinedIcon from '@mui/icons-material/CameraFrontOutlined';
 
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import {
@@ -20,15 +22,18 @@ import { AuthContext } from "../../../../../useContext/AuthContext";
 import { ChatUserContext } from "../../../../../useContext/ChatUserContext";
 import { ActiveCallActionBox, LocalVideoBox } from "../../Theme/Theme";
 
+import Draggable from "react-draggable";
+
 export default function ActiveCall({
   open,
-  onCancel,
   cancelCall,
   localVideoRef,
   remoteVideoRef,
   socket,
   firstHangUpCall,
   secondHangUpCall,
+  front,
+  switchCamera,
   isMicOn,
   setIsMicOn,
   videoCamActive,
@@ -41,6 +46,7 @@ export default function ActiveCall({
   const [chatId, setChatId] = useState(null);
   const [dataUserId, setDataUserId] = useState(null);
   const [remoteStreamLoaded, setRemoteStreamLoaded] = useState(false);
+  
 
   const mute = () => {
     isMicOn ? setIsMicOn(false) : setIsMicOn(true);
@@ -48,6 +54,7 @@ export default function ActiveCall({
       ? (remoteStream.getTracks()[0].enabled = false)
       : (remoteStream.getTracks()[0].enabled = true);
   };
+
 
   const camActive = () => {
     videoCamActive ? setVideoCamActive(false) : setVideoCamActive(true);
@@ -70,7 +77,7 @@ export default function ActiveCall({
                   return docData[key].callActiveState === true;
                 })
                 .join("");
-  
+
               if (dataChatId) {
                 const dataUserId =
                   docData[dataChatId].caller_uid === currentUser.uid
@@ -78,13 +85,13 @@ export default function ActiveCall({
                     : docData[dataChatId].callee_uid === currentUser.uid
                     ? docData[dataChatId].caller_uid
                     : currentUser.uid;
-  
+
                 setChatId(dataChatId);
                 setDataUserId(dataUserId);
               }
             }
           } catch (error) {
-            console.log(error)
+            console.log(error);
           }
         }
       );
@@ -97,7 +104,6 @@ export default function ActiveCall({
     videoCall();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   //when the component mount, the videoCallCollectionRef will updated
   useEffect(() => {
@@ -142,35 +148,34 @@ export default function ActiveCall({
   }, [chatId, currentUser.uid, socket]);
 
   useEffect(() => {
-      const unsubScribe = onSnapshot(
-        doc(userCollectionRef, currentUser.uid),
-        (docSnap) => {
-          try {
-            if (docSnap.data().status.video_call_state === false) {
-              //we triggered the secondHangupCall to the user who not made the
-              //first end up call / hang up call
-              if (chatId !== null) {
-                secondHangUpCall(chatId);
-              }
+    const unsubScribe = onSnapshot(
+      doc(userCollectionRef, currentUser.uid),
+      (docSnap) => {
+        try {
+          if (docSnap.data().status.video_call_state === false) {
+            //we triggered the secondHangupCall to the user who not made the
+            //first end up call / hang up call
+            if (chatId !== null) {
+              secondHangUpCall(chatId);
             }
-          } catch (error) {
-            console.log(error)
           }
+        } catch (error) {
+          console.log(error);
         }
-      );
+      }
+    );
 
-      return () => {
-        unsubScribe();
-      };
+    return () => {
+      unsubScribe();
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chatId]);
-
 
   const handleRemoteStreamLoaded = () => {
     setRemoteStreamLoaded(true);
   };
 
-  // console.log(chatId);
+
   return (
     <Box>
       <Modal
@@ -194,19 +199,21 @@ export default function ActiveCall({
               style={{ width: "100%", height: "100%", objectFit: "contain" }}
               onLoadedData={handleRemoteStreamLoaded}
             />
-            <LocalVideoBox>
-              <video
-                ref={localVideoRef}
-                autoPlay
-                playsInline
-                muted
-                style={{
-                  width: "inherit",
-                  height: "inherit",
-                  objectFit: "inherit",
-                }}
-              />
-            </LocalVideoBox>
+            <Draggable bounds="parent">
+              <LocalVideoBox>
+                <video
+                  ref={localVideoRef}
+                  autoPlay
+                  playsInline
+                  muted
+                  style={{
+                    width: "inherit",
+                    height: "inherit",
+                    objectFit: "inherit",
+                  }}
+                />
+              </LocalVideoBox>
+            </Draggable>
             <Box
               sx={{
                 display: "grid",
@@ -217,53 +224,64 @@ export default function ActiveCall({
               }}
             >
               <Box
-              sx={(theme) => ({
-                display: "flex",
-                justifyContent: "center",
-                gap: "2rem",
-                backgroundColor: theme.palette.default.primary,
-              })}
-            >
-              {videoCamActive ? (
-                <ActiveCallActionBox onClick={() => camActive()}>
-                  <VideocamIcon />
-                </ActiveCallActionBox>
-              ) : (
-                <ActiveCallActionBox onClick={() => camActive()}>
-                  <VideocamOffIcon />
-                </ActiveCallActionBox>
-              )}
+                sx={(theme) => ({
+                  display: "flex",
+                  justifyContent: "center",
+                  gap: "2rem",
+                  backgroundColor: theme.palette.default.primary,
+                  borderRadius: 50,
+                })}
+              >
+                {videoCamActive ? (
+                  <ActiveCallActionBox onClick={() => camActive()}>
+                    <VideocamIcon />
+                  </ActiveCallActionBox>
+                ) : (
+                  <ActiveCallActionBox onClick={() => camActive()}>
+                    <VideocamOffIcon />
+                  </ActiveCallActionBox>
+                )}
 
-              {isMicOn ? (
-                <ActiveCallActionBox onClick={() => mute()}>
-                  <MicIcon />
-                </ActiveCallActionBox>
-              ) : (
-                <ActiveCallActionBox onClick={() => mute()}>
-                  <MicOffIcon />
-                </ActiveCallActionBox>
-              )}
+                {front ? (
+                  <ActiveCallActionBox onClick={() => {switchCamera()}}>
+                    <FlipCameraAndroidOutlinedIcon />
+                  </ActiveCallActionBox>
+                ) : (
+                  <ActiveCallActionBox onClick={() => {switchCamera()}}>
+                    <CameraFrontOutlinedIcon />
+                  </ActiveCallActionBox>
+                )}
 
-              {remoteStreamLoaded ? (
-                <ActiveCallActionBox
-                  onClick={() => {
-                    firstHangUpCall(chatId, dataUserId);
-                    // hangUpHandler();
-                    console.log("hangup");
-                  }}
-                >
-                  <CallEndIcon />
-                </ActiveCallActionBox>
-              ) : (
-                <ActiveCallActionBox
-                  onClick={() => {
-                    cancelCall(chatId, dataUserId);
-                    console.log("cancel");
-                  }}
-                >
-                  <CallEndIcon />
-                </ActiveCallActionBox>
-              )}
+                {isMicOn ? (
+                  <ActiveCallActionBox onClick={() => mute()}>
+                    <MicIcon />
+                  </ActiveCallActionBox>
+                ) : (
+                  <ActiveCallActionBox onClick={() => mute()}>
+                    <MicOffIcon />
+                  </ActiveCallActionBox>
+                )}
+
+                {remoteStreamLoaded ? (
+                  <ActiveCallActionBox
+                    onClick={() => {
+                      firstHangUpCall(chatId, dataUserId);
+                      // hangUpHandler();
+                      console.log("hangup");
+                    }}
+                  >
+                    <CallEndIcon />
+                  </ActiveCallActionBox>
+                ) : (
+                  <ActiveCallActionBox
+                    onClick={() => {
+                      cancelCall(chatId, dataUserId);
+                      console.log("cancel");
+                    }}
+                  >
+                    <CallEndIcon />
+                  </ActiveCallActionBox>
+                )}
               </Box>
             </Box>
           </Box>
