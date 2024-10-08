@@ -31,7 +31,7 @@ export default function Chat() {
 
   const { currentUser } = useContext(AuthContext);
   const { data, dispatch } = useContext(ChatUserContext);
-  const { activeComponent } = useContext(ActiveComponentContext)
+  const { activeComponent } = useContext(ActiveComponentContext);
 
   const [open, setOpen] = useState(false);
 
@@ -45,6 +45,10 @@ export default function Chat() {
 
   //set camera facing. switch front or back camera
   const [front, setFront] = useState(true);
+
+  // set screen sharing
+
+  const [screenSharing, setScreenSharing] = useState(false);
 
   // this for muting the audio or unmuting
   const [isMicOn, setIsMicOn] = useState(true);
@@ -141,8 +145,8 @@ export default function Chat() {
     try {
       if (remoteUserId) {
         const stream = await navigator.mediaDevices.getUserMedia({
-          video: videoCamActive,
-          audio: isMicOn,
+          video: true,
+          audio: true,
         });
 
         localVideoRef.current.srcObject = stream;
@@ -157,24 +161,24 @@ export default function Chat() {
 
         await Promise.all([
           // Update Firestore to indicate that the caller is in a call
-         updateDoc(doc(userCollectionRef, currentUser.uid), {
-          "status.video_call_state": "active",
-        }),
+          updateDoc(doc(userCollectionRef, currentUser.uid), {
+            "status.video_call_state": "active",
+          }),
 
-        // Update the doc fields for currentUser or who is the caller
-         updateDoc(doc(videoCallCollectionRef, currentUser.uid), {
-          [data.chatId + ".callActiveState"]: true,
-          [data.chatId + ".caller_uid"]: currentUser.uid,
-          [data.chatId + ".callee_uid"]: data.user.uid,
-        }),
+          // Update the doc fields for currentUser or who is the caller
+          updateDoc(doc(videoCallCollectionRef, currentUser.uid), {
+            [data.chatId + ".callActiveState"]: true,
+            [data.chatId + ".caller_uid"]: currentUser.uid,
+            [data.chatId + ".callee_uid"]: data.user.uid,
+          }),
 
-        // Update the doc fields for dataUser or who is the callee
-         updateDoc(doc(videoCallCollectionRef, data.user.uid), {
-          [data.chatId + ".callActiveState"]: true,
-          [data.chatId + ".caller_uid"]: currentUser.uid,
-          [data.chatId + ".callee_uid"]: data.user.uid,
-        }),
-        ])
+          // Update the doc fields for dataUser or who is the callee
+          updateDoc(doc(videoCallCollectionRef, data.user.uid), {
+            [data.chatId + ".callActiveState"]: true,
+            [data.chatId + ".caller_uid"]: currentUser.uid,
+            [data.chatId + ".callee_uid"]: data.user.uid,
+          }),
+        ]);
       }
     } catch (error) {
       console.log(error);
@@ -214,6 +218,7 @@ export default function Chat() {
         audio: true,
       });
 
+      console.log(stream);
       localVideoRef.current.srcObject = stream;
       incomingCallRef.current.answer(stream);
       setRemoteStream(stream);
@@ -246,6 +251,9 @@ export default function Chat() {
         setOpen(false);
         setVideoCamActive(true);
         setIsMicOn(true);
+        setFront(true);
+        setScreenSharing(false);
+        setRemoteStream(null);
 
         //disconnect the peerId in server then create new
         socket.current.emit("user-disconnect", currentUser.uid);
@@ -294,6 +302,9 @@ export default function Chat() {
         setOpen(false);
         setVideoCamActive(true);
         setIsMicOn(true);
+        setFront(true);
+        setScreenSharing(false);
+        setRemoteStream(null);
 
         //disconnect the peerId in server then create new
         socket.current.emit("user-disconnect", currentUser.uid);
@@ -329,6 +340,8 @@ export default function Chat() {
       setOpen(false);
       setVideoCamActive(true);
       setIsMicOn(true);
+      setFront(true);
+      setRemoteStream(null);
 
       incomingCallRef.current.close();
 
@@ -379,6 +392,9 @@ export default function Chat() {
       setOpen(false);
       setVideoCamActive(true);
       setIsMicOn(true);
+      setFront(true);
+      setScreenSharing(false);
+      setRemoteStream(null);
 
       //disconnect the peerId in server then create new
       socket.current.emit("user-disconnect", currentUser.uid);
@@ -414,9 +430,26 @@ export default function Chat() {
     }, 1000);
   };
 
+  // we need to check the camera availability of the device input like in laptop or desktop for switching facemode
+  const cameraAvailability = async () => {
+    try {
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasCamera = devices.some((device) => device.kind === "videoinput");
+      return hasCamera;
+    } catch (error) {
+      console.error("Error checking camera availability:", error);
+      return false;
+    }
+  };
+
   // switch facemode
   const switchCamera = async () => {
     try {
+      const cameraAvailable = await cameraAvailability();
+      if (!cameraAvailable) {
+        alert("No camera found on this device.");
+        return;
+      }
       // Stop the current video tracks to free up resources
       const stream = localVideoRef.current.srcObject;
       const audioTrack = stream.getAudioTracks()[0];
@@ -432,24 +465,116 @@ export default function Chat() {
         video: { facingMode: newFacingMode },
       });
 
-      newStream.addTrack(audioTrack)
+      newStream.addTrack(audioTrack);
 
-      setRemoteStream(newStream)
+      setRemoteStream(newStream);
 
       // Apply the new stream to localVideoRef
       localVideoRef.current.srcObject = newStream;
 
+      const userConnectionId = Object.keys(peerRef.current.connections)[0];
+
       // Replace tracks on the existing PeerJS call with new stream tracks
-      const remoteUser = peerRef.current?.connections[
-        allPeerData[data.user.uid]
-      ][0].peerConnection
+      const sender = peerRef.current?.connections[
+        userConnectionId
+      ][0]?.peerConnection
         .getSenders()
-        .find((remoteUser) => remoteUser.track.kind === "video");
-      if (remoteUser) {
-        remoteUser.replaceTrack(newStream.getVideoTracks()[0]);
+        .find((sender) => sender.track.kind === "video");
+      if (sender) {
+        sender.replaceTrack(newStream.getVideoTracks()[0]);
       }
     } catch (error) {
       console.error("Error toggling camera facing mode:", error);
+    }
+  };
+
+  const screenShare = async () => {
+    try {
+      // Check for screen sharing support
+      if (!navigator.mediaDevices.getDisplayMedia) {
+        alert("Screen sharing is not supported on this device.");
+        return;
+      }
+      console.log("Connections:", peerRef.current.connections);
+
+      // Get the current stream to stop the existing video tracks
+      const currentStream = localVideoRef.current.srcObject;
+
+      // Stop existing video tracks
+      if (currentStream) {
+        currentStream.getVideoTracks().forEach((track) => track.stop());
+      }
+
+      // Start screen sharing
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+        audio: true,
+      });
+
+      const userConnectionId = Object.keys(peerRef.current.connections)[0];
+
+      // Access the Peer connection
+      const peerConnection =
+        peerRef.current?.connections[userConnectionId][0]?.peerConnection;
+
+      if (!peerConnection) {
+        console.error("Peer connection not found");
+        return;
+      }
+
+      // Replace the current video track with the screen sharing track
+      const videoSender = peerConnection
+        .getSenders()
+        .find((sender) => sender.track.kind === "video");
+
+      if (videoSender) {
+        videoSender.replaceTrack(screenStream.getVideoTracks()[0]);
+        console.log("Screen sharing initiated, video track replaced.");
+      } else {
+        console.error("No video sender found.");
+      }
+
+      // Update the local video element to reflect screen sharing
+      localVideoRef.current.srcObject = screenStream;
+
+      // Listen for when the screen sharing ends
+      screenStream.getVideoTracks()[0].onended = () => {
+        console.log("Screen sharing ended, switching back to camera...");
+        stopScreenShare();
+      };
+
+      setScreenSharing(true);
+    } catch (error) {
+      console.error("Error starting screen sharing:", error);
+    }
+  };
+
+  const stopScreenShare = async () => {
+    try {
+      // Revert to the camera
+      const cameraStream = await navigator.mediaDevices.getUserMedia({
+        video: { facingMode: front ? "user" : "environment" },
+        audio: true,
+      });
+
+      const videoSender = peerRef.current?.connections[
+        Object.keys(peerRef.current.connections)[0]
+      ][0].peerConnection
+        .getSenders()
+        .find((sender) => sender.track.kind === "video");
+
+      if (videoSender) {
+        videoSender.replaceTrack(cameraStream.getVideoTracks()[0]);
+      }
+
+      setRemoteStream(cameraStream);
+
+      // Update the local video element to reflect the camera feed again
+      localVideoRef.current.srcObject = cameraStream;
+
+      setScreenSharing(false);
+    } catch (error) {
+      console.error("Error stopping screen sharing:", error);
     }
   };
 
@@ -505,6 +630,8 @@ export default function Chat() {
           cancelCall={cancelCall}
           front={front}
           switchCamera={switchCamera}
+          screenSharing={screenSharing}
+          screenShare={screenShare}
           isMicOn={isMicOn}
           setIsMicOn={setIsMicOn}
           videoCamActive={videoCamActive}
