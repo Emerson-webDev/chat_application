@@ -10,8 +10,14 @@ import VideocamIcon from "@mui/icons-material/Videocam";
 import VideocamOffIcon from "@mui/icons-material/VideocamOff";
 import MicIcon from "@mui/icons-material/Mic";
 import MicOffIcon from "@mui/icons-material/MicOff";
-import FlipCameraAndroidOutlinedIcon from '@mui/icons-material/FlipCameraAndroidOutlined';
-import CameraFrontOutlinedIcon from '@mui/icons-material/CameraFrontOutlined';
+import FlipCameraAndroidOutlinedIcon from "@mui/icons-material/FlipCameraAndroidOutlined";
+import CameraFrontOutlinedIcon from "@mui/icons-material/CameraFrontOutlined";
+import ScreenShareOutlinedIcon from "@mui/icons-material/ScreenShareOutlined";
+import StopScreenShareOutlinedIcon from "@mui/icons-material/StopScreenShareOutlined";
+
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
 
 import { doc, onSnapshot, updateDoc } from "firebase/firestore";
 import {
@@ -34,6 +40,8 @@ export default function ActiveCall({
   secondHangUpCall,
   front,
   switchCamera,
+  screenSharing,
+  screenShare,
   isMicOn,
   setIsMicOn,
   videoCamActive,
@@ -46,7 +54,6 @@ export default function ActiveCall({
   const [chatId, setChatId] = useState(null);
   const [dataUserId, setDataUserId] = useState(null);
   const [remoteStreamLoaded, setRemoteStreamLoaded] = useState(false);
-  
 
   const mute = () => {
     isMicOn ? setIsMicOn(false) : setIsMicOn(true);
@@ -54,7 +61,6 @@ export default function ActiveCall({
       ? (remoteStream.getTracks()[0].enabled = false)
       : (remoteStream.getTracks()[0].enabled = true);
   };
-
 
   const camActive = () => {
     videoCamActive ? setVideoCamActive(false) : setVideoCamActive(true);
@@ -175,7 +181,6 @@ export default function ActiveCall({
     setRemoteStreamLoaded(true);
   };
 
-
   return (
     <Box>
       <Modal
@@ -242,16 +247,6 @@ export default function ActiveCall({
                   </ActiveCallActionBox>
                 )}
 
-                {front ? (
-                  <ActiveCallActionBox onClick={() => {switchCamera()}}>
-                    <FlipCameraAndroidOutlinedIcon />
-                  </ActiveCallActionBox>
-                ) : (
-                  <ActiveCallActionBox onClick={() => {switchCamera()}}>
-                    <CameraFrontOutlinedIcon />
-                  </ActiveCallActionBox>
-                )}
-
                 {isMicOn ? (
                   <ActiveCallActionBox onClick={() => mute()}>
                     <MicIcon />
@@ -284,6 +279,42 @@ export default function ActiveCall({
                 )}
               </Box>
             </Box>
+
+            <SpeedDial
+              ariaLabel="SpeedDial basic example"
+              sx={{ position: "absolute", bottom: 16, right: 16 }}
+              icon={<SpeedDialIcon />}
+            >
+              <SpeedDialAction
+                icon={
+                  front ? (
+                    <FlipCameraAndroidOutlinedIcon
+                      onClick={() => {
+                        switchCamera();
+                      }}
+                    />
+                  ) : (
+                    <CameraFrontOutlinedIcon
+                      onClick={() => {
+                        switchCamera();
+                      }}
+                    />
+                  )
+                }
+                tooltipTitle="Switch camera"
+              />
+
+              <SpeedDialAction
+                icon={
+                  screenSharing ? (
+                    <StopScreenShareOutlinedIcon />
+                  ) : (
+                    <ScreenShareOutlinedIcon onClick={ () => {screenShare()} }/>
+                  )
+                }
+                tooltipTitle="Share screen"
+              />
+            </SpeedDial>
           </Box>
         </ModalContent>
       </Modal>
