@@ -27,6 +27,7 @@ import MuiTypography from "@mui/material/Typography";
 import MuiTabs from "@mui/material/Tabs";
 // import MuiImageListItem from "@mui/material/ImageListItem";
 import MuiImageList from "@mui/material/ImageList";
+import MuiSpeedDial from "@mui/material/SpeedDial"
 import CancelIcon from "@mui/icons-material/Cancel";
 import ThumbDownIcon from "@mui/icons-material/ThumbDown";
 import CameraAltIcon from "@mui/icons-material/CameraAlt";
@@ -714,6 +715,15 @@ export const ActiveCallActionBox = styled(MuiIconButton)(({ theme }) => ({
     height: 50,
   },
 }));
+
+export const SpeedDial = styled(MuiSpeedDial)( ({theme}) => ({
+  "& .MuiButtonBase-root" : {
+    backgroundColor: theme.palette.icon.primary,
+    "&:hover" :{
+      backgroundColor: theme.palette.icon.background,
+    }
+  }
+}))
 
 export const ComposerIconButton = styled(MuiIconButton)(({ theme }) => ({
   backgroundColor: theme.palette.mode === "light" ? "#dcf7f4b0" : theme.palette.icon.blur,
