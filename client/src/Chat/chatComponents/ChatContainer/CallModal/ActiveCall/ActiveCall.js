@@ -15,7 +15,6 @@ import CameraFrontOutlinedIcon from "@mui/icons-material/CameraFrontOutlined";
 import ScreenShareOutlinedIcon from "@mui/icons-material/ScreenShareOutlined";
 import StopScreenShareOutlinedIcon from "@mui/icons-material/StopScreenShareOutlined";
 
-import SpeedDial from "@mui/material/SpeedDial";
 import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 
@@ -26,7 +25,7 @@ import {
 } from "../../../../../firebase_config/firebase_config";
 import { AuthContext } from "../../../../../useContext/AuthContext";
 import { ChatUserContext } from "../../../../../useContext/ChatUserContext";
-import { ActiveCallActionBox, LocalVideoBox } from "../../Theme/Theme";
+import { ActiveCallActionBox, LocalVideoBox, SpeedDial } from "../../Theme/Theme";
 
 import Draggable from "react-draggable";
 
@@ -282,7 +281,7 @@ export default function ActiveCall({
 
             <SpeedDial
               ariaLabel="SpeedDial basic example"
-              sx={{ position: "absolute", bottom: 16, right: 16 }}
+              sx={{ position: "absolute", bottom: 16, right: 16,}}
               icon={<SpeedDialIcon />}
             >
               <SpeedDialAction
