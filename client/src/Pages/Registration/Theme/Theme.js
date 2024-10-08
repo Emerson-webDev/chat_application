@@ -44,7 +44,7 @@ export const AppLogo = styled(MuiBox)(({ theme }) => ({
       height: "100px",
     },
   },
-  [theme.breakpoints.between("md", "xl")]: {
+  [theme.breakpoints.between("md")]: {
     display: "none",
   },
 }));
