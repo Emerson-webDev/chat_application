@@ -699,22 +699,19 @@ export const TypographyOffline = styled(MuiTypography)(({ theme }) => ({
 }));
 
 export const ActiveCallActionBox = styled(MuiIconButton)(({ theme }) => ({
-  width: 80,
-  height: 80,
+  width: 50,
+  height: 50,
   "& .MuiSvgIcon-root": {
-    fontSize: "1.25em",
+    fontSize: "1.5rem",
     [theme.breakpoints.down("880")]: {
-      fontSize: "1em",
+      fontSize: "1.25rem",
     },
   },
   "& .MuiSvgIcon-root[data-testid='CallEndIcon']": {
     fill: theme.palette.icon.danger,
   },
-  [theme.breakpoints.down("880")]: {
-    width: 50,
-    height: 50,
-  },
 }));
+
 
 export const SpeedDial = styled(MuiSpeedDial)( ({theme}) => ({
   "& .MuiButtonBase-root" : {
