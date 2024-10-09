@@ -13,12 +13,6 @@ const firebaseConfig = {
   // storageBucket: "",
   // messagingSenderId: "",
   // appId: "",
-  apiKey: "AIzaSyDJcMFPWaCcG4EpNLovj2bdMoqE6t5QKVU",
-  authDomain: "https://chatapp-4e8dd.web.app",
-  projectId: "chatapp-4e8dd",
-  storageBucket: "chatapp-4e8dd.appspot.com",
-  messagingSenderId: "675892992691",
-  appId: "1:675892992691:web:0c655eec1c43c6a6a66ec6",
 };
 
 // Initialize Firebase
