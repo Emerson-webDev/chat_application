@@ -54,7 +54,7 @@ const server = app.listen(process.env.PORT || 3001, () => {
 
 const io = new Server(server, {
   cors: {
-    origin: "*", //https://you_app.web.app or ["https://your_app.firebaseapp.com", "https://your_app.web.app"], this url given by your hosting service firebase
+    origin: "https://chatapp-4e8dd.web.app", //https://you_app.web.app or ["https://your_app.firebaseapp.com", "https://your_app.web.app"], this url given by your hosting service firebase
     methods: ["GET", "POST", "PUT", "DELETE"],
   },
 });
