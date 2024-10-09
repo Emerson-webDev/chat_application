@@ -64,7 +64,7 @@ export default function Chat() {
   useEffect(() => {
     Peer.debug = true;
     const peer = new Peer();
-    socket.current = io(baseURL);
+    socket.current = io(`${baseURL.replace('https', 'wss')}`, {transports : ['websocket']});
 
     try {
       peer.on("open", function (id) {
@@ -181,7 +181,7 @@ export default function Chat() {
         ]);
       }
     } catch (error) {
-      console.log(error);
+      console.log("Error handling creating call:", error);
     }
   };
 
@@ -218,7 +218,6 @@ export default function Chat() {
         audio: true,
       });
 
-      console.log(stream);
       localVideoRef.current.srcObject = stream;
       incomingCallRef.current.answer(stream);
       setRemoteStream(stream);
@@ -278,7 +277,7 @@ export default function Chat() {
         }),
       ]);
     } catch (error) {
-      console.log(error);
+      console.log("Error handling hang up call:", error);
     }
   };
 
@@ -327,7 +326,7 @@ export default function Chat() {
         }),
       ]);
     } catch (error) {
-      console.log(error);
+      console.log("Error handling hang up call:", error);
     }
   };
 
@@ -495,7 +494,6 @@ export default function Chat() {
         alert("Screen sharing is not supported on this device.");
         return;
       }
-      console.log("Connections:", peerRef.current.connections);
 
       // Get the current stream to stop the existing video tracks
       const currentStream = localVideoRef.current.srcObject;
@@ -508,7 +506,7 @@ export default function Chat() {
       // Start screen sharing
       const screenStream = await navigator.mediaDevices.getDisplayMedia({
         video: true,
-        audio: true,
+        audio: true, // Include if you want to share audio
       });
 
       const userConnectionId = Object.keys(peerRef.current.connections)[0];
@@ -529,7 +527,6 @@ export default function Chat() {
 
       if (videoSender) {
         videoSender.replaceTrack(screenStream.getVideoTracks()[0]);
-        console.log("Screen sharing initiated, video track replaced.");
       } else {
         console.error("No video sender found.");
       }
@@ -539,7 +536,6 @@ export default function Chat() {
 
       // Listen for when the screen sharing ends
       screenStream.getVideoTracks()[0].onended = () => {
-        console.log("Screen sharing ended, switching back to camera...");
         stopScreenShare();
       };
 
