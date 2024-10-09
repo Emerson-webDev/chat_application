@@ -19,7 +19,7 @@ const {
 
 const { v4: uuid } = require("uuid");
 
-const http = require("http");
+// const http = require("http");
 const { Server } = require("socket.io");
 
 // const fs = require("fs");
@@ -46,7 +46,11 @@ app.use(cors());
 //   app
 // );
 
-const server = http.createServer(app)
+// const server = http.createServer(app)
+
+const server = app.listen(process.env.PORT || 3001, () => {
+  console.log("Server listening on port: " + (process.env.PORT || 3001));
+});
 
 const io = new Server(server, {
   cors: {
@@ -202,10 +206,4 @@ app.post("/accept_request/:id", async (req, res) => {
 
 app.get("/", async (req, res) => {
   res.json({ message: "hello world" });
-});
-
-const PORT = process.env.PORT || 3001;
-
-server.listen(PORT, () => {
-  console.log("Example app listening on port :" + PORT);
 });
