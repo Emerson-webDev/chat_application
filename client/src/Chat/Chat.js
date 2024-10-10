@@ -61,10 +61,15 @@ export default function Chat() {
   const peerRef = useRef(null);
   const incomingCallRef = useRef(null);
 
+  const socketURL = baseURL.startsWith("https")
+      ? baseURL.replace("https", "wss")
+      : baseURL.replace("http", "ws");
+
   useEffect(() => {
     Peer.debug = true;
     const peer = new Peer();
-    socket.current = io(`${baseURL.replace('https', 'wss')}`, {transports : ['websocket']});
+
+    socket.current = io(socketURL, { transports: ["websocket"] });
 
     try {
       peer.on("open", function (id) {
