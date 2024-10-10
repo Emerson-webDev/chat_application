@@ -27,8 +27,6 @@ export default function Chat() {
   const theme = useTheme();
   const matches = useMediaQuery(theme.breakpoints.down(880));
 
-  // const [activeComponent, setActiveComponent] = useState("Chat");
-
   const { currentUser } = useContext(AuthContext);
   const { data, dispatch } = useContext(ChatUserContext);
   const { activeComponent } = useContext(ActiveComponentContext);
