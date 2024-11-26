@@ -68,7 +68,7 @@ io.on("connection", (socket) => {
         socket.emit("currentPeerID", userPeerID))
       : (users[currentId] = userPeerID),
       socket.emit("currentPeerID", userPeerID),
-      // console.log(users);
+      console.log(users);
 
     io.sockets.emit("allPeerData", users);
   });
@@ -78,7 +78,7 @@ io.on("connection", (socket) => {
       delete users[currentId];
       // delete users[remoteUserPeerId]
       io.sockets.emit("allPeerData", users); // Emitting updated users to all clients
-      // console.log(`User ${currentId} disconnected`);
+      console.log(`User ${currentId} disconnected`);
       // console.log(users);
     }
   });
